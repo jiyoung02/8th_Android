@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back"
+        android:layout_marginTop="26dp"
+        android:layout_marginStart="17dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/tv_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오늘 하루는 어땠나요?"
+        android:textAppearance="@style/TextAppearance.App.Meidum"
+        android:textSize="30sp"
+        android:layout_marginTop="125dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <TextView
+        android:id="@+id/tv_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="감정우표를 선택해주세요"
+        android:textAppearance="@style/TextAppearance.App.Meidum"
+        android:textSize="22sp"
+        android:layout_marginTop="11dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_text1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <TextView
+        android:id="@+id/tv_text3"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:text="선택한 감정우표를 기반으로 맞춤형 질문이 배달됩니다"
+        android:textSize="8sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="14dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_text2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <LinearLayout
+        android:id="@+id/layout_stamps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_text3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <LinearLayout
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="19dp"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/iv_happy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/stamp_happy"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/tv_happy"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:text="더없이 행복한 하루였어요"
+                android:textAppearance="@style/TextAppearance.App.Meidum"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:layout_marginTop="7dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="19dp"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/iv_excited"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/stamp_excited"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/tv_excited"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:text="들뜨고 흥분돼요"
+                android:textAppearance="@style/TextAppearance.App.Meidum"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:layout_marginTop="7dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="19dp"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/iv_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/stamp_normal"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/tv_normal"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:text="평범한 하루였어요"
+                android:textAppearance="@style/TextAppearance.App.Meidum"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:layout_marginTop="7dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="19dp"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/iv_nervous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/stamp_nervous"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/tv_nervous"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:text="생각이 많아지고 불안해요"
+                android:textAppearance="@style/TextAppearance.App.Meidum"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:layout_marginTop="7dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="19dp"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/iv_angry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/stamp_angry"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/tv_angry"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:text="부글부글 화가 나요"
+                android:textAppearance="@style/TextAppearance.App.Meidum"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:layout_marginTop="7dp"/>
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
