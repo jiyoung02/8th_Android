@@ -1,4 +1,4 @@
-package com.example.umc_8th_mission
+package umc.mission
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.example.umc_8th_mission
+package umc.mission
 
 import org.junit.Test
 

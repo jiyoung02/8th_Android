@@ -1,5 +1,6 @@
-package umc.mission
+package umc.mission.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import umc.mission.databinding.ActivityMainBinding
@@ -16,8 +17,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun setClickListener(){
         binding.ivHappy.setOnClickListener {
-            binding.tvHappy.text = "click"
+            startSubActivity(binding.tvHappy.text.toString())
         }
     }
+
+    private fun startSubActivity(text : String){
+        val intent = Intent(this, SubActivity::class.java)
+        intent.putExtra("emotion", text)
+        startActivity(intent)
+    }
+
 }
 

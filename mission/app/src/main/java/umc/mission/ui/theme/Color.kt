@@ -1,4 +1,4 @@
-package com.example.umc_8th_mission.ui.theme
+package umc.mission.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
