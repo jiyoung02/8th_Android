@@ -15,9 +15,23 @@ class MainActivity : AppCompatActivity() {
         setClickListener()
     }
 
+    // 아직 기능이 뭐가 나올지 몰라서 하드 코딩으로 각각 설정
+    // 비슷한 기능을 추가하게 될 경우 수정 예정
     private fun setClickListener(){
         binding.ivHappy.setOnClickListener {
             startSubActivity(binding.tvHappy.text.toString())
+        }
+        binding.ivExcited.setOnClickListener {
+            startSubActivity(binding.tvExcited.text.toString())
+        }
+        binding.ivNormal.setOnClickListener {
+            startSubActivity(binding.tvNormal.text.toString())
+        }
+        binding.ivNervous.setOnClickListener {
+            startSubActivity(binding.tvNervous.text.toString())
+        }
+        binding.ivAngry.setOnClickListener {
+            startSubActivity(binding.tvAngry.text.toString())
         }
     }
 
