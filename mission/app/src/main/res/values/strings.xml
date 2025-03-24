@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">UMC_8th_mission</string>
+    <string name="text_happy">더없이 행복한 하루였어요</string>
+    <string name="text_excited">들뜨고 흥분돼요</string>
+    <string name="text_normal">평범한 하루였어요</string>
+    <string name="text_nervous">생각이 많아지고 불안해요</string>
+    <string name="text_angry">부글부글 화가 나요</string>
 </resources>
