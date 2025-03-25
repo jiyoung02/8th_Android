@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.App.Meidum" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/gangwon_edu_hyeonok</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+</resources>
