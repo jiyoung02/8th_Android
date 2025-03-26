@@ -2,6 +2,7 @@ package umc.mission.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +19,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         // 여기는 바인딩 못쓰나?
        // val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
        // val navController = navHostFragment.navController
         //binding.bottomNavi.setupWithNavController(navController)
-       binding.bottomNavi.setOnClickListener { item->
-           when(item.id){
+       binding.bottomNavi.setOnItemSelectedListener { item->
+           when(item.itemId){
                R.id.navigation_home->{
                    supportFragmentManager.beginTransaction()
                        .replace(R.id.fragment_container, HomeFragment()).commit()
