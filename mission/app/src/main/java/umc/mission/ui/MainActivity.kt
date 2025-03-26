@@ -1,8 +1,11 @@
 package umc.mission.ui
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import umc.mission.R
 import umc.mission.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -11,34 +14,54 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        // splashScreen 적용
+        //installSplashScreen()
         setContentView(binding.root)
-        setClickListener()
-    }
 
-    // 아직 기능이 뭐가 나올지 몰라서 하드 코딩으로 각각 설정
-    // 비슷한 기능을 추가하게 될 경우 수정 예정
-    private fun setClickListener(){
-        binding.ivHappy.setOnClickListener {
-            startSubActivity(binding.tvHappy.text.toString())
-        }
-        binding.ivExcited.setOnClickListener {
-            startSubActivity(binding.tvExcited.text.toString())
-        }
-        binding.ivNormal.setOnClickListener {
-            startSubActivity(binding.tvNormal.text.toString())
-        }
-        binding.ivNervous.setOnClickListener {
-            startSubActivity(binding.tvNervous.text.toString())
-        }
-        binding.ivAngry.setOnClickListener {
-            startSubActivity(binding.tvAngry.text.toString())
-        }
-    }
 
-    private fun startSubActivity(text : String){
-        val intent = Intent(this, SubActivity::class.java)
-        intent.putExtra("emotion", text)
-        startActivity(intent)
+        // 여기는 바인딩 못쓰나?
+       // val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+       // val navController = navHostFragment.navController
+        //binding.bottomNavi.setupWithNavController(navController)
+
+        // bottomNav 설정
+        binding.bottomNavi.setOnItemSelectedListener { item->
+           val transaction = supportFragmentManager.beginTransaction()
+           when(item.itemId){
+               R.id.navigation_home->{
+                    transaction.setCustomAnimations(
+                        R.anim.anim_slide_in_from_left_fade_in,
+                        R.anim.anim_fade_out
+                    )
+                    transaction.replace(R.id.fragment_container, HomeFragment()).commit()
+                   //navController.navigate(R.id.navigation_home)
+                   true
+               }
+               R.id.navigation_record->{
+                   Toast.makeText(this, "아직 사용할 수 없어요!", Toast.LENGTH_SHORT).show()
+                   false
+               }
+               R.id.navigation_social->{
+                   Toast.makeText(this, "아직 사용할 수 없어요!", Toast.LENGTH_SHORT).show()
+                   false
+               }
+               R.id.navigation_mypage->{
+                   //navController.navigate(R.id.navigation_mypage)
+                   transaction.setCustomAnimations(
+                       R.anim.anim_slide_in_from_right_fade_in,
+                       R.anim.anim_fade_out
+                   )
+                   transaction.replace(R.id.fragment_container, StampFragment()).commit()
+                   true
+               }
+               else -> false
+           }
+       }
+
+    }
+    fun hideBottomNavigation(state:Boolean){
+        if(state) binding.bottomNavi.visibility = View.GONE else binding.bottomNavi.visibility=View.VISIBLE
     }
 
 }
