@@ -7,6 +7,8 @@ android {
     namespace = "com.example.flo"
     compileSdk = 34
 
+    viewBinding{true}
+
     defaultConfig {
         applicationId = "com.example.flo"
         minSdk = 33
