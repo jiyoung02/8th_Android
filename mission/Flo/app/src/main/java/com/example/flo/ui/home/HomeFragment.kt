@@ -45,9 +45,15 @@ class HomeFragment : Fragment() {
 
         binding.ivAlbumImage1.setOnClickListener {
             // replace ( 바꿀 화면 id, 반영할 프래그먼트)
+            var bundle = Bundle()
+            bundle.putString("title",binding.tvAlbumTitle1.text.toString())
+            bundle.putString("singer", binding.tvAlbumSinger1.text.toString())
+            val fragment = AlbumFragment().apply {
+                arguments = bundle
+            }
             (context as MainActivity).supportFragmentManager.beginTransaction().replace(
                 R.id.nav_host_fragment_activity_main,
-                AlbumFragment()
+                fragment
             ).commitAllowingStateLoss()
         }
 

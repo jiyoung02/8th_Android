@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                 binding.tvSongSinger.text.toString()
             )
             val intent = Intent(this,SongActivity::class.java)
-            intent.putExtra("title",song.song)
+            intent.putExtra("title",song.singer)
             intent.putExtra("singer",song.title)
             startActivity(intent)
         }

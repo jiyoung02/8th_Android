@@ -16,6 +16,7 @@ class HomePanelFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = ItemVpHomePanelBinding.inflate(inflater,container,false)
+
         return binding.root
 
     }

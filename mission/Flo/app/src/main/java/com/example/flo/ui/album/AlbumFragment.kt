@@ -12,16 +12,24 @@ import com.example.flo.ui.home.HomeFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
 class AlbumFragment: Fragment() {
-    lateinit var binding : FragmentAlbumBinding
+    private var _binding : FragmentAlbumBinding ? = null
+    private val binding get() = _binding!!
     private val information  = arrayListOf("수록곡", "상세정보", "영상")
+    private var title : String = ""
+    private var singer : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAlbumBinding.inflate(inflater,container,false)
+        _binding = FragmentAlbumBinding.inflate(inflater,container,false)
 
+        title = arguments?.getString("title")!!
+        singer = arguments?.getString("singer")!!
+
+        binding.tvAlbumTitle.text = title
+        binding.tvAlbumSinger.text = singer
 
         val albumAdapter = AlbumVPAdapter(this)
         binding.vpAlbumContents.adapter = albumAdapter
@@ -37,7 +45,11 @@ class AlbumFragment: Fragment() {
                 HomeFragment()
             ).commitAllowingStateLoss()
         }
-
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
