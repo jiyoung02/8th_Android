@@ -144,7 +144,7 @@
         android:orientation="horizontal"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/iv_related_song"
-        app:layout_constraintTop_toBottomOf="st">
+        app:layout_constraintTop_toBottomOf="@id/tv_start_time">
         <ImageView
             android:id="@+id/iv_controller_repeat"
             android:layout_width="48dp"

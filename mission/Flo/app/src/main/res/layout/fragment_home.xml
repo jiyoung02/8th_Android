@@ -9,7 +9,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_home_banner"
         android:layout_width="match_parent"
-        android:layout_height="430dp"
+        android:layout_height="400dp"
         android:background="@color/black"
         app:layout_constraintTop_toTopOf="parent"/>
 
