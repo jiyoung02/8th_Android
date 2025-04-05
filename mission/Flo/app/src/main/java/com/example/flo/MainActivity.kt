@@ -1,7 +1,11 @@
 package com.example.flo
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -14,6 +18,17 @@ import com.example.flo.ui.SongActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
+    companion object{
+        const val STRING_INTENT_KEY = "my_string_key"
+    }
+    private val getResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()){ result->
+            if(result.resultCode == Activity.RESULT_OK){
+                val returnString = result.data?.getStringExtra(STRING_INTENT_KEY)
+                Toast.makeText(this,returnString,Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,9 +58,9 @@ class MainActivity : AppCompatActivity() {
                 binding.tvSongSinger.text.toString()
             )
             val intent = Intent(this,SongActivity::class.java)
-            intent.putExtra("title",song.singer)
-            intent.putExtra("singer",song.title)
-            startActivity(intent)
+            intent.putExtra("title",song.title)
+            intent.putExtra("singer",song.singer)
+            getResult.launch(intent)
         }
     }
 }
