@@ -25,7 +25,7 @@
 
 
     <fragment android:id="@+id/navigation_locker"
-        android:name="com.example.flo.ui.LockerFragment"
+        android:name="com.example.flo.ui.locker.LockerFragment"
         android:label="@string/title_locker"
         tools:layout="@layout/fragment_locker"/>
 </navigation>
