@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Flo</string>
+    <string name="title_home">홈</string>
+    <string name="title_look">둘러보기</string>
+    <string name="title_search">검색</string>
+    <string name="title_locker">보관함</string>
+</resources>
