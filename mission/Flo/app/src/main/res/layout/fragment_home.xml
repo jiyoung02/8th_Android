@@ -20,6 +20,15 @@
                 android:layout_height="400dp"
                 android:background="@color/black"
                 app:layout_constraintTop_toTopOf="parent"/>
+            <me.relex.circleindicator.CircleIndicator3
+                android:id="@+id/panel_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                app:ci_drawable_unselected="@drawable/custom_default_circle"
+                app:ci_drawable="@drawable/custom_select_circle"
+                app:layout_constraintTop_toBottomOf="@id/vp_home_panel"
+                app:layout_constraintBottom_toTopOf="@id/layout_music_info"/>
+
 
             <LinearLayout
                 android:id="@+id/layout_music_info"
@@ -27,8 +36,8 @@
                 android:layout_height="24dp"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/vp_home_panel">
+
+                app:layout_constraintTop_toBottomOf="@id/panel_indicator">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
