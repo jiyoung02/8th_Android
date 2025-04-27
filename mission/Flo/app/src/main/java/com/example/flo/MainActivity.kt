@@ -55,11 +55,13 @@ class MainActivity : AppCompatActivity() {
         binding.layoutMiniplayer.setOnClickListener{
             val song = Song(
                 binding.tvSongTitle.text.toString(),
-                binding.tvSongSinger.text.toString()
+                binding.tvSongSinger.text.toString(),
+                0,
+                60,
+                false
             )
             val intent = Intent(this,SongActivity::class.java)
-            intent.putExtra("title",song.title)
-            intent.putExtra("singer",song.singer)
+            intent.putExtra("song",song)
             getResult.launch(intent)
         }
     }
