@@ -27,7 +27,7 @@ androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecy
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
-androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
+androidx-core = { group = "androidx.core", name = "core", version.ref = "appcompat" }
 circleindicator = { group = "me.relex", name = "circleindicator", version.ref = "circleindicator" }
 
 [plugins]

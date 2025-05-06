@@ -46,23 +46,27 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_search, R.id.navigation_look,R.id.navigation_locker
             )
         )
-        setMiniPlayer()
+
+        val song = Song(
+            binding.tvSongTitle.text.toString(),
+            binding.tvSongSinger.text.toString(),
+            0,
+            60,
+            false
+        )
+        setMiniPlayer(song)
         //setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 
-    private fun setMiniPlayer(){
+    private fun setMiniPlayer(song : Song){
         binding.layoutMiniplayer.setOnClickListener{
-            val song = Song(
-                binding.tvSongTitle.text.toString(),
-                binding.tvSongSinger.text.toString(),
-                0,
-                60,
-                false
-            )
             val intent = Intent(this,SongActivity::class.java)
             intent.putExtra("song",song)
             getResult.launch(intent)
         }
+        binding.tvSongTitle.text = song.title
+        binding.tvSongSinger.text = song.singer
+        binding.sbMainPlayer.progress = (song.second*100000)/song.playTime
     }
 }
