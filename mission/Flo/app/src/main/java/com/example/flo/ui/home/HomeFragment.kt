@@ -1,6 +1,7 @@
 package com.example.flo.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,12 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.example.flo.MainActivity
 import com.example.flo.R
 import com.example.flo.data.Album
 import com.example.flo.databinding.FragmentHomeBinding
+import com.example.flo.ui.album.AlbumFragment
+import com.google.gson.Gson
 
 class HomeFragment : Fragment() {
 
+    private val TAG = javaClass.simpleName
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -31,10 +36,25 @@ class HomeFragment : Fragment() {
         initPanel()
         initDummy()
 
-        val adapter = HomeAlbumRVAdapter(albumData)
+        val adapter = HomeAlbumRVAdapter(albumData) {album ->
+            Log.d(TAG,"click : ${album}")
+            changeAlbumFragment(album)
+        }
+
         binding.rvTodayMusic.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvTodayMusic.adapter = adapter
         return  binding.root
+    }
+
+    private fun changeAlbumFragment(album: Album) {
+        (context as MainActivity).supportFragmentManager.beginTransaction().
+        replace(R.id.nav_host_fragment_activity_main, AlbumFragment().apply{
+            arguments = Bundle().apply {
+                val gson = Gson()
+                val albumJson = gson.toJson(album)
+                putString("album",albumJson)
+            }
+        }).commitAllowingStateLoss()
     }
 
     private fun initDummy(){
@@ -80,3 +100,5 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+
+

@@ -7,12 +7,10 @@ import com.example.flo.data.Album
 import com.example.flo.databinding.ItemRvHomeAlbumBinding
 
 class HomeAlbumRVAdapter (
-    private val albumList : ArrayList<Album>
+    private val albumList : ArrayList<Album>,
+    private val itemClick : (album : Album) -> Unit
 ) : RecyclerView.Adapter<HomeAlbumRVAdapter.ViewHolder>() {
 
-//    interface itemClick{
-//        fun onItemClick
-//    }
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -26,6 +24,7 @@ class HomeAlbumRVAdapter (
         position: Int
     ) {
         holder.bind(albumList[position])
+        holder.itemView.setOnClickListener { itemClick(albumList[position])  }
     }
 
     override fun getItemCount(): Int  = albumList.size
