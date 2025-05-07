@@ -6,16 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.example.flo.MainActivity
 import com.example.flo.R
+import com.example.flo.data.Album
 import com.example.flo.databinding.FragmentHomeBinding
-import com.example.flo.ui.album.AlbumFragment
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private var albumData = ArrayList<Album>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,22 +29,24 @@ class HomeFragment : Fragment() {
 
         initBanner()
         initPanel()
+        initDummy()
 
-        binding.ivAlbumImage1.setOnClickListener {
-            // replace ( 바꿀 화면 id, 반영할 프래그먼트)
-            val bundle = Bundle()
-            bundle.putString("title",binding.tvAlbumTitle1.text.toString())
-            bundle.putString("singer", binding.tvAlbumSinger1.text.toString())
-            val fragment = AlbumFragment().apply {
-                arguments = bundle
-            }
-            (context as MainActivity).supportFragmentManager.beginTransaction().replace(
-                R.id.nav_host_fragment_activity_main,
-                fragment
-            ).commitAllowingStateLoss()
+        val adapter = HomeAlbumRVAdapter(albumData)
+        binding.rvTodayMusic.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvTodayMusic.adapter = adapter
+        return  binding.root
+    }
+
+    private fun initDummy(){
+        albumData.apply {
+            add( Album("Lilac","아이유",R.drawable.img_album_exp2))
+            add( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
+            add( Album("Whiplash","에스파",R.drawable.img_album2))
+            add(Album("Butter","방탄소년단",R.drawable.img_album_exp))
+            add( Album("Lilac","아이유",R.drawable.img_album_exp2))
+            add( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
         }
 
-        return  binding.root
     }
 
     private fun initPanel() {
