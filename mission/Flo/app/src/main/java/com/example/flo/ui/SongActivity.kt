@@ -3,6 +3,7 @@ package com.example.flo.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,11 +12,16 @@ import com.example.flo.MainActivity
 import com.example.flo.R
 import com.example.flo.data.Song
 import com.example.flo.databinding.ActivitySongBinding
+import com.google.gson.Gson
 
 class SongActivity: AppCompatActivity() {
+    private val TAG = javaClass.simpleName
     lateinit var binding : ActivitySongBinding
     lateinit var song : Song
     lateinit var timer : Timer
+    private var mediaPlayer : MediaPlayer? = null
+    private var gson : Gson = Gson()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySongBinding.inflate(layoutInflater)
@@ -41,9 +47,24 @@ class SongActivity: AppCompatActivity() {
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        setPlayerStatus(false)
+        song.second = ((binding.sbSongProgress.progress * song.playTime)/100)/100
+        Log.d(TAG, "Pause : ${song}")
+        val spf = getSharedPreferences("song", MODE_PRIVATE)
+        val editor = spf.edit()
+        val songJson = gson.toJson(song)
+        editor.putString("songData",songJson)
+        editor.apply()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         timer.interrupt()
+        mediaPlayer?.release()  // 리소스 해제
+        mediaPlayer = null // 플레이어 해제
+
     }
 
     @SuppressLint("DefaultLocale")
@@ -53,6 +74,8 @@ class SongActivity: AppCompatActivity() {
         binding.tvStartTime.text = String.format("%02d:%02d",song.second/60 , song.second%60)
         binding.tvEndTime.text = String.format("%02d:%02d",song.playTime/60 , song.playTime%60)
         binding.sbSongProgress.progress =(song.second * 1000 / song.playTime)
+        val music = resources.getIdentifier(song.music,"raw",this.packageName)
+        mediaPlayer = MediaPlayer.create(this, music)
         setPlayerStatus(song.isPlaying)
 
     }
@@ -64,10 +87,14 @@ class SongActivity: AppCompatActivity() {
         if(isPlaying){
             binding.ivControllerPlay.visibility = View.GONE
             binding.ivControllerPause.visibility = View.VISIBLE
+            mediaPlayer?.start()
         }
         else{
             binding.ivControllerPlay.visibility = View.VISIBLE
             binding.ivControllerPause.visibility = View.GONE
+            if(mediaPlayer?.isPlaying == true){
+                mediaPlayer?.pause()
+            }
         }
     }
 
