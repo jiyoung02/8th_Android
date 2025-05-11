@@ -32,7 +32,7 @@ class SongActivity: AppCompatActivity() {
 
         binding.ivBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java).apply {
-                putExtra(MainActivity.STRING_INTENT_KEY, "Return Song Title : $title")
+                putExtra(MainActivity.STRING_INTENT_KEY, "Return Songitg Title : $title")
             }
             setResult(Activity.RESULT_OK,intent)
             finish()
