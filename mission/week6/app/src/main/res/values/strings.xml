@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">UMC_8th_mission</string>
+    <string name="app_name">week6</string>
+    <string name="title_home">Home</string>
+    <string name="title_post">Post</string>
+    <string name="title_notifications">Notifications</string>
+
     <string name="text_happy">더없이 행복한 하루였어요</string>
     <string name="text_excited">들뜨고 흥분돼요</string>
     <string name="text_normal">평범한 하루였어요</string>
