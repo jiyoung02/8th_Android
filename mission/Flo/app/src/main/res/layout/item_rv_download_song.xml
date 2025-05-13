@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingVertical="4dp"
+    android:layout_marginVertical="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="56dp">
+    <ImageView
+        android:id="@+id/iv_song_img"
+        android:layout_width="56dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/img_album1"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <TextView
+        android:id="@+id/tv_song_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintStart_toEndOf="@id/iv_song_img"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_song_singer"/>
+    <TextView
+        android:id="@+id/tv_song_singer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="singer"
+        android:textSize="12sp"
+        android:textColor="@color/gray_color"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintStart_toStartOf="@id/tv_song_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_song_title" />
+
+    <ImageView
+        android:id="@+id/iv_more"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/btn_player_more"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <ImageView
+        android:id="@+id/iv_play"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/btn_player_play"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@id/iv_more"
+       />
+</androidx.constraintlayout.widget.ConstraintLayout>

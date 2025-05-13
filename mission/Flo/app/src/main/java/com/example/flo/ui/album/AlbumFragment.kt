@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.flo.MainActivity
 import com.example.flo.R
+import com.example.flo.data.Album
 import com.example.flo.databinding.FragmentAlbumBinding
 import com.example.flo.ui.home.HomeFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
 
 class AlbumFragment: Fragment() {
     private var _binding : FragmentAlbumBinding ? = null
@@ -17,6 +19,7 @@ class AlbumFragment: Fragment() {
     private val information  = arrayListOf("수록곡", "상세정보", "영상")
     private var title : String = ""
     private var singer : String = ""
+    private val gson = Gson()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,11 +28,10 @@ class AlbumFragment: Fragment() {
     ): View? {
         _binding = FragmentAlbumBinding.inflate(inflater,container,false)
 
-        title = arguments?.getString("title")!!
-        singer = arguments?.getString("singer")!!
+        val albumJson = arguments?.getString("album")
+        val album = gson.fromJson(albumJson,Album::class.java)
+        initData(album)
 
-        binding.tvAlbumTitle.text = title
-        binding.tvAlbumSinger.text = singer
 
         val albumAdapter = AlbumVPAdapter(this)
         binding.vpAlbumContents.adapter = albumAdapter
@@ -46,6 +48,12 @@ class AlbumFragment: Fragment() {
             ).commitAllowingStateLoss()
         }
         return binding.root
+    }
+
+    private fun initData(album: Album) {
+        binding.tvAlbumTitle.text = album.title
+        binding.tvAlbumSinger.text = album.singer
+        binding.ivAlbumImage.setImageResource(album.coverImg!!)
     }
 
     override fun onDestroyView() {
