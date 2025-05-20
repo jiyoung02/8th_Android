@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.flo.DB.SongDatabase
 import com.example.flo.MainActivity
 import com.example.flo.R
 import com.example.flo.data.Album
@@ -17,8 +18,6 @@ class AlbumFragment: Fragment() {
     private var _binding : FragmentAlbumBinding ? = null
     private val binding get() = _binding!!
     private val information  = arrayListOf("수록곡", "상세정보", "영상")
-    private var title : String = ""
-    private var singer : String = ""
     private val gson = Gson()
 
     override fun onCreateView(
@@ -27,11 +26,10 @@ class AlbumFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentAlbumBinding.inflate(inflater,container,false)
-
-        val albumJson = arguments?.getString("album")
-        val album = gson.fromJson(albumJson,Album::class.java)
+        val songDB = SongDatabase.getIntance(requireContext())!!
+        val albumId =arguments?.getInt("albumId")
+        val album = songDB.albumDao().getAlbum(albumId!!)
         initData(album)
-
 
         val albumAdapter = AlbumVPAdapter(this)
         binding.vpAlbumContents.adapter = albumAdapter

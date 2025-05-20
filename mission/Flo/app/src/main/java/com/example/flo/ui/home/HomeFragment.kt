@@ -9,11 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.example.flo.DB.SongDatabase
 import com.example.flo.MainActivity
 import com.example.flo.R
 import com.example.flo.data.Album
+import com.example.flo.data.Song
 import com.example.flo.databinding.FragmentHomeBinding
 import com.example.flo.ui.album.AlbumFragment
+import com.example.flo.ui.home.HomeAlbumRVAdapter.clickListener
 import com.google.gson.Gson
 
 class HomeFragment : Fragment() {
@@ -21,7 +24,7 @@ class HomeFragment : Fragment() {
     private val TAG = javaClass.simpleName
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
+    lateinit var songDB : SongDatabase
     private var albumData = ArrayList<Album>()
 
     override fun onCreateView(
@@ -29,45 +32,40 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
+        songDB =  SongDatabase.getIntance(requireContext())!!
         initBanner()
         initPanel()
-        initDummy()
 
-        val adapter = HomeAlbumRVAdapter(albumData) {album ->
-            Log.d(TAG,"click : ${album}")
-            changeAlbumFragment(album)
-        }
+        // DB에서 앨범 데이터 읽어오기
+        albumData.addAll(songDB.albumDao().getAlbums())
+
+        val adapter = HomeAlbumRVAdapter(albumData, object : clickListener{
+            override fun moveAlbumFragment(id: Int) {
+                changeAlbumFragment(id)
+            }
+            override fun playAlbum(song: Song){
+                (activity as MainActivity).setMiniPlayer(song)
+            }
+
+        })
 
         binding.rvTodayMusic.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvTodayMusic.adapter = adapter
         return  binding.root
     }
 
-    private fun changeAlbumFragment(album: Album) {
+
+    private fun changeAlbumFragment(id : Int) {
         (context as MainActivity).supportFragmentManager.beginTransaction().
         replace(R.id.nav_host_fragment_activity_main, AlbumFragment().apply{
             arguments = Bundle().apply {
-                val gson = Gson()
-                val albumJson = gson.toJson(album)
-                putString("album",albumJson)
+                putInt("albumId", id)
             }
         }).commitAllowingStateLoss()
     }
 
-    private fun initDummy(){
-        albumData.apply {
-            add( Album("Lilac","아이유",R.drawable.img_album_exp2))
-            add( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
-            add( Album("Whiplash","에스파",R.drawable.img_album2))
-            add(Album("Butter","방탄소년단",R.drawable.img_album_exp))
-            add( Album("Lilac","아이유",R.drawable.img_album_exp2))
-            add( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
-        }
 
-    }
 
     private fun initPanel() {
         val panelAdapter = HomePanelVPAdapter(this)
