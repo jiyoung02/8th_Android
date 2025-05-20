@@ -1,8 +1,6 @@
 package com.example.flo.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -11,7 +9,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flo.DB.SongDatabase
-import com.example.flo.MainActivity
 import com.example.flo.R
 import com.example.flo.data.Song
 import com.example.flo.databinding.ActivitySongBinding
@@ -40,6 +37,23 @@ class SongActivity: AppCompatActivity() {
         setContentView(binding.root)
 
     }
+
+
+    override fun onPause() {
+        super.onPause()
+        setPlayerStatus(false)
+        songs[nowPos].second = ((binding.sbSongProgress.progress * songs[nowPos].playTime)/100)/100
+        Log.d(TAG, "Pause : ${songs[nowPos]}")
+        spf.edit().putInt("songId",songs[nowPos].id).apply()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer.interrupt()
+        mediaPlayer?.release()  // 리소스 해제
+        mediaPlayer = null // 플레이어 해제
+
+    }
     private fun initPlaylist(){
         songDB  =SongDatabase.getIntance(this)!!
         songs.addAll(songDB.songDao().getSongs())
@@ -58,23 +72,6 @@ class SongActivity: AppCompatActivity() {
         }
         return 0
     }
-
-    override fun onPause() {
-        super.onPause()
-        setPlayerStatus(false)
-        songs[nowPos].second = ((binding.sbSongProgress.progress * songs[nowPos].playTime)/100)/100
-        Log.d(TAG, "Pause : ${songs[nowPos]}")
-        spf.edit().putInt("songId",songs[nowPos].id).apply()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        timer.interrupt()
-        mediaPlayer?.release()  // 리소스 해제
-        mediaPlayer = null // 플레이어 해제
-
-    }
-
     @SuppressLint("DefaultLocale")
     private fun setPlayer(song: Song){
         binding.tvSongTitle.text = song.title
@@ -85,6 +82,13 @@ class SongActivity: AppCompatActivity() {
 
         val music = resources.getIdentifier(song.music,"raw",this.packageName)
         mediaPlayer = MediaPlayer.create(this, music)
+
+        if (song.isLike){
+            binding.ivLike.setImageResource(R.drawable.ic_my_like_on)
+        } else{
+            binding.ivLike.setImageResource(R.drawable.ic_my_like_off)
+        }
+
         setPlayerStatus(song.isPlaying)
 
     }
@@ -105,7 +109,9 @@ class SongActivity: AppCompatActivity() {
         binding.ivControllerNext.setOnClickListener {
             moveSong(1)
         }
-
+        binding.ivLike.setOnClickListener {
+            setLike(songs[nowPos].isLike)
+        }
 
     }
     private fun moveSong(direct : Int){
@@ -141,6 +147,17 @@ class SongActivity: AppCompatActivity() {
             if(mediaPlayer?.isPlaying == true){
                 mediaPlayer?.pause()
             }
+        }
+    }
+
+    private fun setLike(isLike: Boolean) {
+        songs[nowPos].isLike = !isLike
+        songDB.songDao().updateIsLikeById(!isLike,songs[nowPos].id)
+
+        if (!isLike){
+            binding.ivLike.setImageResource(R.drawable.ic_my_like_on)
+        } else{
+            binding.ivLike.setImageResource(R.drawable.ic_my_like_off)
         }
     }
 
@@ -185,3 +202,5 @@ class SongActivity: AppCompatActivity() {
 
 
 }
+
+

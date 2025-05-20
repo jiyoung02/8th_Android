@@ -13,8 +13,10 @@ import com.example.flo.DB.SongDatabase
 import com.example.flo.MainActivity
 import com.example.flo.R
 import com.example.flo.data.Album
+import com.example.flo.data.Song
 import com.example.flo.databinding.FragmentHomeBinding
 import com.example.flo.ui.album.AlbumFragment
+import com.example.flo.ui.home.HomeAlbumRVAdapter.clickListener
 import com.google.gson.Gson
 
 class HomeFragment : Fragment() {
@@ -38,9 +40,15 @@ class HomeFragment : Fragment() {
         // DB에서 앨범 데이터 읽어오기
         albumData.addAll(songDB.albumDao().getAlbums())
 
-        val adapter = HomeAlbumRVAdapter(albumData) {album ->
-            changeAlbumFragment(album)
-        }
+        val adapter = HomeAlbumRVAdapter(albumData, object : clickListener{
+            override fun moveAlbumFragment(id: Int) {
+                changeAlbumFragment(id)
+            }
+            override fun playAlbum(song: Song){
+                (activity as MainActivity).setMiniPlayer(song)
+            }
+
+        })
 
         binding.rvTodayMusic.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvTodayMusic.adapter = adapter
@@ -48,11 +56,11 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun changeAlbumFragment(album: Album) {
+    private fun changeAlbumFragment(id : Int) {
         (context as MainActivity).supportFragmentManager.beginTransaction().
         replace(R.id.nav_host_fragment_activity_main, AlbumFragment().apply{
             arguments = Bundle().apply {
-                putInt("albumId", album.id)
+                putInt("albumId", id)
             }
         }).commitAllowingStateLoss()
     }

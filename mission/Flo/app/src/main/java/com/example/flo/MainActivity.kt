@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val songId = spf.getInt("songId",0)
-        val songJson = spf.getString("songData",null)
 
         val songDB = SongDatabase.getIntance(this)!!
         song = if(songId == 0) songDB.songDao().getSong(1) else songDB.songDao().getSong(songId)
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         setMiniPlayer(song)
     }
 
-    private fun setMiniPlayer(song : Song){
+    fun setMiniPlayer(song : Song){
         binding.layoutMiniplayer.setOnClickListener{
             spf.edit().putInt("songId",song.id).apply()
             val intent = Intent(this,SongActivity::class.java)
