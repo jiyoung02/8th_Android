@@ -3,11 +3,13 @@ package com.example.flo.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.flo.DB.SongDatabase
 import com.example.flo.MainActivity
 import com.example.flo.R
 import com.example.flo.data.Song
@@ -17,17 +19,22 @@ import com.google.gson.Gson
 class SongActivity: AppCompatActivity() {
     private val TAG = javaClass.simpleName
     lateinit var binding : ActivitySongBinding
-    lateinit var song : Song
+
     lateinit var timer : Timer
+    lateinit var spf : SharedPreferences
     private var mediaPlayer : MediaPlayer? = null
     private var gson : Gson = Gson()
+    private val songs = arrayListOf<Song>()
+    lateinit var songDB : SongDatabase
+    private var nowPos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySongBinding.inflate(layoutInflater)
-        song = intent.getParcelableExtra<Song>("song")!!
-        startTimer()
-        setPlayer()
+        spf = getSharedPreferences("song", MODE_PRIVATE)
+
+        initPlaylist()
+        initSong()
         setContentView(binding.root)
 
         binding.ivBack.setOnClickListener {
@@ -46,15 +53,34 @@ class SongActivity: AppCompatActivity() {
         }
 
     }
+    private fun initPlaylist(){
+        songDB  =SongDatabase.getIntance(this)!!
+        songs.addAll(songDB.songDao().getSongs())
+
+    }
+
+    private fun initSong(){
+        val songId = spf.getInt("songId",0)
+        nowPos = getPlayingSongPosition(songId)
+        startTimer()
+        setPlayer()
+    }
+    private fun getPlayingSongPosition(songId: Int): Int {
+        for(i in 0 until songs.size){
+            if(songs[i].id == songId)
+                return i
+        }
+        return 0
+    }
 
     override fun onPause() {
         super.onPause()
         setPlayerStatus(false)
-        song.second = ((binding.sbSongProgress.progress * song.playTime)/100)/100
-        Log.d(TAG, "Pause : ${song}")
+        songs[nowPos].second = ((binding.sbSongProgress.progress * songs[nowPos].playTime)/100)/100
+        Log.d(TAG, "Pause : ${songs[nowPos]}")
         val spf = getSharedPreferences("song", MODE_PRIVATE)
         val editor = spf.edit()
-        val songJson = gson.toJson(song)
+        val songJson = gson.toJson(songs[nowPos])
         editor.putString("songData",songJson)
         editor.apply()
     }
@@ -69,20 +95,20 @@ class SongActivity: AppCompatActivity() {
 
     @SuppressLint("DefaultLocale")
     private fun setPlayer(){
-        binding.tvSongTitle.text = song.title
-        binding.tvSongSinger.text = song.singer
-        binding.tvStartTime.text = String.format("%02d:%02d",song.second/60 , song.second%60)
-        binding.tvEndTime.text = String.format("%02d:%02d",song.playTime/60 , song.playTime%60)
-        binding.sbSongProgress.progress =(song.second * 1000 / song.playTime)
-        val music = resources.getIdentifier(song.music,"raw",this.packageName)
+        binding.tvSongTitle.text = songs[nowPos].title
+        binding.tvSongSinger.text = songs[nowPos].singer
+        binding.tvStartTime.text = String.format("%02d:%02d",songs[nowPos].second/60 , songs[nowPos].second%60)
+        binding.tvEndTime.text = String.format("%02d:%02d",songs[nowPos].playTime/60 , songs[nowPos].playTime%60)
+        binding.sbSongProgress.progress =(songs[nowPos].second * 1000 / songs[nowPos].playTime)
+        val music = resources.getIdentifier(songs[nowPos].music,"raw",this.packageName)
         mediaPlayer = MediaPlayer.create(this, music)
-        setPlayerStatus(song.isPlaying)
+        setPlayerStatus(songs[nowPos].isPlaying)
 
     }
 
 
     private fun setPlayerStatus(isPlaying: Boolean) {
-        song.isPlaying = isPlaying
+        songs[nowPos].isPlaying = isPlaying
         timer.isPlaying = isPlaying
         if(isPlaying){
             binding.ivControllerPlay.visibility = View.GONE
@@ -99,7 +125,7 @@ class SongActivity: AppCompatActivity() {
     }
 
     private fun startTimer(){
-        timer = Timer(song.playTime, song.isPlaying)
+        timer = Timer(songs[nowPos].playTime, songs[nowPos].isPlaying)
         timer.start()
     }
 
