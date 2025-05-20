@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flo.DB.SongDatabase
 import com.example.flo.MainActivity
@@ -35,35 +36,20 @@ class SongActivity: AppCompatActivity() {
 
         initPlaylist()
         initSong()
+        initClickListner()
         setContentView(binding.root)
-
-        binding.ivBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java).apply {
-                putExtra(MainActivity.STRING_INTENT_KEY, "Return Songitg Title : $title")
-            }
-            setResult(Activity.RESULT_OK,intent)
-            finish()
-        }
-
-        binding.ivControllerPlay.setOnClickListener {
-            setPlayerStatus(true)
-        }
-        binding.ivControllerPause.setOnClickListener {
-            setPlayerStatus(false)
-        }
 
     }
     private fun initPlaylist(){
         songDB  =SongDatabase.getIntance(this)!!
         songs.addAll(songDB.songDao().getSongs())
-
     }
 
     private fun initSong(){
         val songId = spf.getInt("songId",0)
         nowPos = getPlayingSongPosition(songId)
         startTimer()
-        setPlayer()
+        setPlayer(songs[nowPos])
     }
     private fun getPlayingSongPosition(songId: Int): Int {
         for(i in 0 until songs.size){
@@ -78,11 +64,7 @@ class SongActivity: AppCompatActivity() {
         setPlayerStatus(false)
         songs[nowPos].second = ((binding.sbSongProgress.progress * songs[nowPos].playTime)/100)/100
         Log.d(TAG, "Pause : ${songs[nowPos]}")
-        val spf = getSharedPreferences("song", MODE_PRIVATE)
-        val editor = spf.edit()
-        val songJson = gson.toJson(songs[nowPos])
-        editor.putString("songData",songJson)
-        editor.apply()
+        spf.edit().putInt("songId",songs[nowPos].id).apply()
     }
 
     override fun onDestroy() {
@@ -94,18 +76,56 @@ class SongActivity: AppCompatActivity() {
     }
 
     @SuppressLint("DefaultLocale")
-    private fun setPlayer(){
-        binding.tvSongTitle.text = songs[nowPos].title
-        binding.tvSongSinger.text = songs[nowPos].singer
-        binding.tvStartTime.text = String.format("%02d:%02d",songs[nowPos].second/60 , songs[nowPos].second%60)
-        binding.tvEndTime.text = String.format("%02d:%02d",songs[nowPos].playTime/60 , songs[nowPos].playTime%60)
-        binding.sbSongProgress.progress =(songs[nowPos].second * 1000 / songs[nowPos].playTime)
-        val music = resources.getIdentifier(songs[nowPos].music,"raw",this.packageName)
+    private fun setPlayer(song: Song){
+        binding.tvSongTitle.text = song.title
+        binding.tvSongSinger.text = song.singer
+        binding.tvStartTime.text = String.format("%02d:%02d",song.second/60 , song.second%60)
+        binding.tvEndTime.text = String.format("%02d:%02d",song.playTime/60 , song.playTime%60)
+        binding.sbSongProgress.progress =(song.second * 1000 / song.playTime)
+
+        val music = resources.getIdentifier(song.music,"raw",this.packageName)
         mediaPlayer = MediaPlayer.create(this, music)
-        setPlayerStatus(songs[nowPos].isPlaying)
+        setPlayerStatus(song.isPlaying)
 
     }
 
+    private fun initClickListner(){
+        binding.ivControllerPlay.setOnClickListener {
+            setPlayerStatus(true)
+        }
+        binding.ivControllerPause.setOnClickListener {
+            setPlayerStatus(false)
+        }
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+        binding.ivControllerPrev.setOnClickListener {
+            moveSong(-1)
+        }
+        binding.ivControllerNext.setOnClickListener {
+            moveSong(1)
+        }
+
+
+    }
+    private fun moveSong(direct : Int){
+        if(nowPos+direct<0){
+            Toast.makeText(this,"first song", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if(nowPos+direct >= songs.size){
+            Toast.makeText(this,"last song", Toast.LENGTH_SHORT).show()
+            return
+        }
+        nowPos += direct
+        timer.interrupt()
+        startTimer()
+
+        mediaPlayer?.release()
+        mediaPlayer = null
+
+        setPlayer(songs[nowPos])
+    }
 
     private fun setPlayerStatus(isPlaying: Boolean) {
         songs[nowPos].isPlaying = isPlaying

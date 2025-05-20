@@ -14,6 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.flo.DB.SongDatabase
+import com.example.flo.data.Album
 import com.example.flo.data.Song
 import com.example.flo.databinding.ActivityMainBinding
 import com.example.flo.ui.SongActivity
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var spf : SharedPreferences
     private var gson : Gson = Gson()
     private var song = Song()
+    lateinit var songDB : SongDatabase
 
     companion object{
         const val STRING_INTENT_KEY = "my_string_key"
@@ -43,7 +45,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         spf = getSharedPreferences("songId", MODE_PRIVATE)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        songDB = SongDatabase.getIntance(this)!!
         setContentView(binding.root)
+        initDummyAlbum()
         inputDummySongs()
         val navView: BottomNavigationView = binding.navView
 
@@ -61,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val songId = spf.getInt("songID",0)
+        val songId = spf.getInt("songId",0)
         val songJson = spf.getString("songData",null)
 
         val songDB = SongDatabase.getIntance(this)!!
@@ -72,9 +76,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setMiniPlayer(song : Song){
         binding.layoutMiniplayer.setOnClickListener{
-            spf.edit().putInt("song",song.id).apply()
+            spf.edit().putInt("songId",song.id).apply()
             val intent = Intent(this,SongActivity::class.java)
-            intent.putExtra("song",song.id)
             getResult.launch(intent)
         }
         binding.tvSongTitle.text = song.title
@@ -82,16 +85,28 @@ class MainActivity : AppCompatActivity() {
         binding.sbMainPlayer.progress = (song.second*100000)/song.playTime
     }
 
+    private fun initDummyAlbum(){
+        val albums = songDB.albumDao().getAlbums()
+        if(albums.isNotEmpty()) return
+        songDB.albumDao().insert(Album("Lilac","아이유",R.drawable.img_album_exp2))
+        songDB.albumDao().insert( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
+        songDB.albumDao().insert( Album("Whiplash","에스파",R.drawable.img_album2))
+        songDB.albumDao().insert(Album("Butter","방탄소년단",R.drawable.img_album_exp))
+        songDB.albumDao().insert( Album("Lilac","아이유",R.drawable.img_album_exp2))
+        songDB.albumDao().insert( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
+
+    }
+
     private fun inputDummySongs(){
-        val songDB = SongDatabase.getIntance(this)!!
         val songs = songDB.songDao().getSongs()
 
         if(songs.isNotEmpty()) return
-        songDB.songDao().insert(Song("라일락", "아이유", 0, 60, false, "iu_lilac", R.drawable.img_album_exp2, false))
-        songDB.songDao().insert(Song("attitude", "아이브", 0, 60, false, "ive_attitude", R.drawable.img_album1, false))
-        songDB.songDao().insert(Song("라일락2", "아이유", 0, 60, false, "iu_lilac", R.drawable.img_album_exp2, false))
-        songDB.songDao().insert(Song("attitude2", "아이브", 0, 60, false, "ive_attitude", R.drawable.img_album1, false))
+        songDB.songDao().insert(Song("라일락", "아이유", 0, 60, false, "iu_lilac", R.drawable.img_album_exp2, false, 1))
+        songDB.songDao().insert(Song("attitude", "아이브", 0, 60, false, "ive_attitude", R.drawable.img_album1, false,2))
+        songDB.songDao().insert(Song("라일락2", "아이유", 0, 60, false, "iu_lilac", R.drawable.img_album_exp2, false,1))
+        songDB.songDao().insert(Song("attitude2", "아이브", 0, 60, false, "ive_attitude", R.drawable.img_album1, false,2))
         val _songs = songDB.songDao().getSongs()
         Log.d(TAG, "DB data: ${_songs}")
     }
+
 }
