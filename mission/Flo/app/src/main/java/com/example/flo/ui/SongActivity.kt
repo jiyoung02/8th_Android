@@ -17,7 +17,6 @@ import com.google.gson.Gson
 class SongActivity: AppCompatActivity() {
     private val TAG = javaClass.simpleName
     lateinit var binding : ActivitySongBinding
-
     lateinit var timer : Timer
     lateinit var spf : SharedPreferences
     private var mediaPlayer : MediaPlayer? = null

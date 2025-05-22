@@ -11,7 +11,6 @@ data class Album(
     var title : String? = "",
     var singer : String? = "",
     var coverImg : Int? = null,
-    var songList : List<Song>
 ):  Parcelable{
     @PrimaryKey(autoGenerate = true) var id : Int = 0
 }

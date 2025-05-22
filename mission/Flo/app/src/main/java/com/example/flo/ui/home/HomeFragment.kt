@@ -44,8 +44,8 @@ class HomeFragment : Fragment() {
             override fun moveAlbumFragment(id: Int) {
                 changeAlbumFragment(id)
             }
-            override fun playAlbum(song: Song){
-                (activity as MainActivity).setMiniPlayer(song)
+            override fun playAlbum(id: Int){
+                (activity as MainActivity).initSong(id, 0)
             }
 
         })
