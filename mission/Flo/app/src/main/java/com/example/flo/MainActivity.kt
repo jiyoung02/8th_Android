@@ -1,10 +1,13 @@
 package com.example.flo
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,11 +26,12 @@ import com.google.gson.Gson
 class MainActivity : AppCompatActivity() {
     private val TAG = javaClass.simpleName
     private lateinit var binding: ActivityMainBinding
+    private var mediaPlayer : MediaPlayer? = null
     lateinit var spf : SharedPreferences
-    private var gson : Gson = Gson()
-    private var song = Song()
+    private val songs = arrayListOf<Song>()
+    private var nowPos = 0
     lateinit var songDB : SongDatabase
-
+    private var timer : Timer? = null
     companion object{
         const val STRING_INTENT_KEY = "my_string_key"
     }
@@ -43,12 +47,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        spf = getSharedPreferences("songId", MODE_PRIVATE)
+        spf = getSharedPreferences("app_data", MODE_PRIVATE)
         binding = ActivityMainBinding.inflate(layoutInflater)
         songDB = SongDatabase.getIntance(this)!!
         setContentView(binding.root)
         initDummyAlbum()
         inputDummySongs()
+        initClickListner()
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -66,14 +71,28 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val songId = spf.getInt("songId",0)
+        if(songId == 0) binding.tvSongTitle.text = "재생중인 노래가 없습니다"
+        else {
+            val albumId = songDB.songDao().getAlbumId(songId)
+            initSong(albumId, songId)
+        }
 
-        val songDB = SongDatabase.getIntance(this)!!
-        song = if(songId == 0) songDB.songDao().getSong(1) else songDB.songDao().getSong(songId)
-        Log.d(TAG, "song : ${song}")
-        setMiniPlayer(song)
     }
 
-    fun setMiniPlayer(song : Song){
+    fun initSong(albumId : Int, songId : Int){
+        songs.clear()
+        songs.addAll(songDB.albumDao().getSongsByAlbumId(albumId))
+        nowPos = songId
+        for (i in 0.. songs.size-1){
+            if (songs[i].id == songId){
+                nowPos = i
+                break
+            }
+        }
+        setMiniPlayer(songs[nowPos])
+    }
+
+    private fun setMiniPlayer(song : Song){
         binding.layoutMiniplayer.setOnClickListener{
             spf.edit().putInt("songId",song.id).apply()
             val intent = Intent(this,SongActivity::class.java)
@@ -81,7 +100,56 @@ class MainActivity : AppCompatActivity() {
         }
         binding.tvSongTitle.text = song.title
         binding.tvSongSinger.text = song.singer
-        binding.sbMainPlayer.progress = (song.second*100000)/song.playTime
+        mediaPlayer?.release()
+        val music = resources.getIdentifier(song.music,"raw",this.packageName)
+        mediaPlayer = MediaPlayer.create(this, music)
+        if (timer!= null) timer!!.interrupt()
+        startTimer()
+        setPlayerStatus(song.isPlaying)
+
+    }
+
+    private fun initClickListner(){
+        binding.ivMinipalyerPlay.setOnClickListener {
+            if (songs[nowPos].isPlaying) setPlayerStatus(false)
+            else setPlayerStatus(true)
+        }
+        binding.ivMinipalyerPrev.setOnClickListener {
+            moveSong(-1)
+        }
+        binding.ivMinipalyerNext.setOnClickListener {
+            moveSong(1)
+        }
+    }
+    private fun moveSong(direct : Int){
+        if(nowPos+direct<0){
+            Toast.makeText(this,"first song", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if(nowPos+direct >= songs.size){
+            Toast.makeText(this,"last song", Toast.LENGTH_SHORT).show()
+            return
+        }
+        nowPos += direct
+        timer!!.interrupt()
+        startTimer()
+        mediaPlayer?.release()
+        mediaPlayer = null
+
+        setMiniPlayer(songs[nowPos])
+        setPlayerStatus(true)
+    }
+    private fun setPlayerStatus(isPlaying: Boolean) {
+        songs[nowPos].isPlaying = isPlaying
+        timer!!.isPlaying = isPlaying
+        if (isPlaying){
+            binding.ivMinipalyerPlay.setImageResource(R.drawable.btn_miniplay_pause)
+            mediaPlayer?.start()
+        }else{
+            binding.ivMinipalyerPlay.setImageResource(R.drawable.btn_miniplayer_play)
+            if(mediaPlayer?.isPlaying == true) mediaPlayer?.pause()
+        }
+
     }
 
     private fun initDummyAlbum(){
@@ -91,8 +159,8 @@ class MainActivity : AppCompatActivity() {
         songDB.albumDao().insert( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
         songDB.albumDao().insert( Album("Whiplash","에스파",R.drawable.img_album2))
         songDB.albumDao().insert(Album("Butter","방탄소년단",R.drawable.img_album_exp))
-        songDB.albumDao().insert( Album("Lilac","아이유",R.drawable.img_album_exp2))
-        songDB.albumDao().insert( Album("IVE EMPATHY","아이브", R.drawable.img_album1))
+        songDB.albumDao().insert( Album("Lilac2","아이유",R.drawable.img_album_exp2))
+        songDB.albumDao().insert( Album("IVE EMPATHY2","아이브", R.drawable.img_album1))
 
     }
 
@@ -107,5 +175,38 @@ class MainActivity : AppCompatActivity() {
         val _songs = songDB.songDao().getSongs()
         Log.d(TAG, "DB data: ${_songs}")
     }
+    private fun startTimer(){
+        timer = Timer(songs[nowPos].playTime, songs[nowPos].isPlaying)
+        timer!!.start()
+    }
 
+    inner class Timer(private  val playTime: Int = 0, var isPlaying: Boolean = true) : Thread(){
+        private var second : Int = 0
+        private var mills : Float = 0f
+
+        @SuppressLint("DefaultLocale")
+        override fun run() {
+            super.run()
+            try {
+                while (true){
+                    if(second >= playTime) break
+                    if (isPlaying){
+                        sleep(50)
+                        mills += 50
+
+                        runOnUiThread {
+                            binding.sbMainPlayer.progress = ((mills / playTime)*10).toInt()
+                        }
+
+                        if(mills %1000 == 0f){
+                            second++
+                        }
+                    }
+                }
+            }catch (e : InterruptedException){
+                Log.d("Song","쓰레드가 죽었습니다 ${e.message}")
+            }
+
+        }
+    }
 }

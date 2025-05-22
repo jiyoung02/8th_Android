@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.flo.data.Album
+import com.example.flo.data.Song
 
 
 @Dao
@@ -22,4 +23,7 @@ interface AlbumDao {
 
     @Query("SELECT * FROM AlbumTable WHERE id = :id")
     fun getAlbum(id: Int): Album
+
+    @Query("SELECT * FROM SongTable WHERE albumId = :id")
+    fun getSongsByAlbumId(id: Int): List<Song>
 }

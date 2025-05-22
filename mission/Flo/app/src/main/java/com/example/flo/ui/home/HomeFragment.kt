@@ -1,10 +1,12 @@
 package com.example.flo.ui.home
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +26,7 @@ class HomeFragment : Fragment() {
     private val TAG = javaClass.simpleName
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    lateinit var spf : SharedPreferences
     lateinit var songDB : SongDatabase
     private var albumData = ArrayList<Album>()
 
@@ -33,6 +36,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        spf = requireContext().getSharedPreferences("app_data", MODE_PRIVATE)
         songDB =  SongDatabase.getIntance(requireContext())!!
         initBanner()
         initPanel()
@@ -44,8 +48,8 @@ class HomeFragment : Fragment() {
             override fun moveAlbumFragment(id: Int) {
                 changeAlbumFragment(id)
             }
-            override fun playAlbum(song: Song){
-                (activity as MainActivity).setMiniPlayer(song)
+            override fun playAlbum(id: Int){
+                (activity as MainActivity).initSong(id, 0)
             }
 
         })
@@ -57,12 +61,9 @@ class HomeFragment : Fragment() {
 
 
     private fun changeAlbumFragment(id : Int) {
+        spf.edit().putInt("albumId",id).apply()
         (context as MainActivity).supportFragmentManager.beginTransaction().
-        replace(R.id.nav_host_fragment_activity_main, AlbumFragment().apply{
-            arguments = Bundle().apply {
-                putInt("albumId", id)
-            }
-        }).commitAllowingStateLoss()
+        replace(R.id.nav_host_fragment_activity_main, AlbumFragment()).commitAllowingStateLoss()
     }
 
 
