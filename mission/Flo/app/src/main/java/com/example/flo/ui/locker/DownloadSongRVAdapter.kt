@@ -21,6 +21,7 @@ class DownloadSongRVAdapter (
 
             binding.ivPlay.setOnClickListener { clickListener.clickPlay(song) }
             binding.ivMore.setOnClickListener {
+                clickListener.clickMore(song)
                 itemList.removeAt(pos)
                 notifyItemRemoved(pos)
             }
@@ -47,6 +48,6 @@ class DownloadSongRVAdapter (
     }
     interface ClickListener {
         fun clickPlay(song: Song)
-        fun clickMore(pos: Int)
+        fun clickMore(song: Song)
     }
 }

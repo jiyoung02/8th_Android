@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        spf = getSharedPreferences("songId", MODE_PRIVATE)
+        spf = getSharedPreferences("app_data", MODE_PRIVATE)
         binding = ActivityMainBinding.inflate(layoutInflater)
         songDB = SongDatabase.getIntance(this)!!
         setContentView(binding.root)
@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun initSong(albumId : Int, songId : Int){
+        songs.clear()
         songs.addAll(songDB.albumDao().getSongsByAlbumId(albumId))
         nowPos = songId
         for (i in 0.. songs.size-1){
@@ -104,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer = MediaPlayer.create(this, music)
         if (timer!= null) timer!!.interrupt()
         startTimer()
-        setPlayerStatus(true)
+        setPlayerStatus(song.isPlaying)
 
     }
 
