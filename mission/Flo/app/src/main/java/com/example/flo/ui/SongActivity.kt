@@ -17,7 +17,6 @@ import com.google.gson.Gson
 class SongActivity: AppCompatActivity() {
     private val TAG = javaClass.simpleName
     lateinit var binding : ActivitySongBinding
-
     lateinit var timer : Timer
     lateinit var spf : SharedPreferences
     private var mediaPlayer : MediaPlayer? = null
@@ -29,7 +28,7 @@ class SongActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySongBinding.inflate(layoutInflater)
-        spf = getSharedPreferences("song", MODE_PRIVATE)
+        spf = getSharedPreferences("app_data", MODE_PRIVATE)
 
         initPlaylist()
         initSong()
@@ -55,6 +54,7 @@ class SongActivity: AppCompatActivity() {
 
     }
     private fun initPlaylist(){
+        songs.clear()
         songDB  =SongDatabase.getIntance(this)!!
         songs.addAll(songDB.songDao().getSongs())
     }
@@ -74,6 +74,7 @@ class SongActivity: AppCompatActivity() {
     }
     @SuppressLint("DefaultLocale")
     private fun setPlayer(song: Song){
+        Log.d(TAG,"dislike ${songDB.songDao().getSong(song.id)}")
         binding.tvSongTitle.text = song.title
         binding.tvSongSinger.text = song.singer
         binding.tvStartTime.text = String.format("%02d:%02d",song.second/60 , song.second%60)
@@ -134,6 +135,7 @@ class SongActivity: AppCompatActivity() {
     }
 
     private fun setPlayerStatus(isPlaying: Boolean) {
+        Log.d(TAG,"dislike ${songs[nowPos]}")
         songs[nowPos].isPlaying = isPlaying
         timer.isPlaying = isPlaying
         if(isPlaying){
@@ -153,11 +155,10 @@ class SongActivity: AppCompatActivity() {
     private fun setLike(isLike: Boolean) {
         songs[nowPos].isLike = !isLike
         songDB.songDao().updateIsLikeById(!isLike,songs[nowPos].id)
-
-        if (!isLike){
-            binding.ivLike.setImageResource(R.drawable.ic_my_like_on)
-        } else{
+        if (isLike){
             binding.ivLike.setImageResource(R.drawable.ic_my_like_off)
+        } else{
+            binding.ivLike.setImageResource(R.drawable.ic_my_like_on)
         }
     }
 

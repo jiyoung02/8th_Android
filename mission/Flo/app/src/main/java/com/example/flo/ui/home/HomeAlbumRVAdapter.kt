@@ -37,13 +37,13 @@ class HomeAlbumRVAdapter (
             binding.tvAlbumTitle.text = album.title
             binding.tvAlbumSinger.text = album.singer
             binding.ivPlay.setOnClickListener {
-                itemClick.playAlbum(album.songList[0])
+                itemClick.playAlbum(album.id)
             }
         }
     }
 
     interface clickListener{
         fun moveAlbumFragment(id : Int)
-        fun playAlbum(song: Song)
+        fun playAlbum(id: Int)
     }
 }
